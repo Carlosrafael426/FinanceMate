@@ -1,6 +1,7 @@
 // src/pages/Login.jsx
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import Logo from "../../assets/FMLogo.png";
 
 const API_URL = 'https://financemate-api.onrender.com/api'
 
@@ -47,8 +48,8 @@ function Login({onLogin}) {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
       <div className="w-full max-w-md">
         
-        <div className="text-center mb-8">
-          <img src="../../assets/FMLogo.png" alt="logo" />
+        <div className="text-center mb-8 flex flex-col ">
+          <img src={Logo} alt="logo" className="h-10 w-120 h-35" />
           <p className="text-gray-600 dark:text-gray-400 mt-2">
             Controle suas finanças de forma simples
           </p>
@@ -105,7 +106,7 @@ function Login({onLogin}) {
             <button 
               type="submit" 
               disabled={carregando}
-              className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 
+              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-800 
                        disabled:bg-emerald-400 disabled:cursor-not-allowed
                        text-white font-semibold rounded-lg shadow-md
                        transition-all duration-200 transform hover:scale-[1.02]"
@@ -118,7 +119,7 @@ function Login({onLogin}) {
             Não tem conta?{' '}
             <Link 
               to="/registrar" 
-              className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline"
+              className="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
             >
               Cadastre-se
             </Link>
