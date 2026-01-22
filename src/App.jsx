@@ -8,8 +8,8 @@ import TransactionEditForm from "./components/TransactionEditForm";
 import RotaProtegida from "./components/RotaProtegida";
 import Home from "./pages/Home";
 import Relatorio from "./pages/Relatorio";
-import Login from "./pages/Login";
-import Cadastro from "./pages/Cadastro";
+import Login from "./pages/login";
+import Cadastro from "./pages/cadastro";
 import {
   buscarTransacoes,
   criarTransacao,
