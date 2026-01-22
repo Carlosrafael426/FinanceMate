@@ -59,7 +59,6 @@ function Cadastro({onLogin }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4 py-8">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <img src="../../assets/FMLogo.png" alt="logo" />
           <p className="text-gray-600 dark:text-gray-400 mt-2">
