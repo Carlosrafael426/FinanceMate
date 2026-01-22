@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-const API_URL = 'https://financemate-api.onrender.com'
+const API_URL = 'https://financemate-api.onrender.com/api'
 
 function Cadastro({onLogin }) {
   const [nome, setNome] = useState('')
