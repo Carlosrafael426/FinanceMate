@@ -48,9 +48,7 @@ function Login({onLogin}) {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-emerald-600 dark:text-emerald-400">
-            💰 FinanceMate
-          </h1>
+          <img src="../../assets/FMLogo.png" alt="logo" />
           <p className="text-gray-600 dark:text-gray-400 mt-2">
             Controle suas finanças de forma simples
           </p>
