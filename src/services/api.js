@@ -1,5 +1,5 @@
 // src/services/api.js
-const API_URL = 'http://localhost:3001/api'
+const API_URL = 'https://financemate-api.onrender.com'
 
 // Pegar o token do localStorage
 function getToken() {
