@@ -1,12 +1,14 @@
+// src/components/Header.jsx
 import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../../hooks/useTheme'
 import Logo from '../../assets/FMLogo.png'
 
-// ... resto do código continua igual
-
-function Header() {
+function Header({ onLogout }) {
   const location = useLocation()
   const { darkMode, toggleDarkMode } = useTheme()
+
+  // Pegar nome do usuário do localStorage
+  const usuario = JSON.parse(localStorage.getItem('usuario'))
 
   return (
     <header className="bg-lime-400 dark:bg-gray-900 text-white py-4">
@@ -39,6 +41,13 @@ function Header() {
               </Link>
             </nav>
 
+            {/* Nome do usuário */}
+            {usuario && (
+              <span className="text-sm text-gray-800 dark:text-gray-300 hidden sm:block">
+                Olá, {usuario.nome}!
+              </span>
+            )}
+
             {/* Botão Dark Mode */}
             <button
               onClick={toggleDarkMode}
@@ -46,6 +55,16 @@ function Header() {
               title={darkMode ? 'Modo Claro' : 'Modo Escuro'}
             >
               {darkMode ? '☀️' : '🌙'}
+            </button>
+
+            {/* Botão Logout */}
+            <button
+              onClick={onLogout}
+              className="px-3 sm:px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 
+                       text-white text-sm sm:text-base transition-colors"
+              title="Sair da conta"
+            >
+              🚪 Sair
             </button>
           </div>
         </div>
