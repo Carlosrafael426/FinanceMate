@@ -81,3 +81,11 @@ Sistema de controle financeiro pessoal desenvolvido com React e Node.js.
 ```bash
 git clone https://github.com/Carlosrafael426/FinanceMate.git
 cd FinanceMate
+```
+
+### 2️⃣ Configurar variáveis de ambiente
+
+- Frontend: copie `.env.example` para `.env` e ajuste `VITE_API_URL` se necessário
+- Backend: copie `Backend/.env.example` para `Backend/.env` e defina `MONGODB_URI`, `JWT_SECRET` e `CORS_ORIGIN`
+
+### 3️⃣ Instalar dependências

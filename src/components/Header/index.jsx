@@ -1,14 +1,13 @@
 // src/components/Header.jsx
-import { Link, useLocation } from "react-router-dom";
-import { useTheme } from "../../hooks/useTheme";
-import Logo from "../../assets/FMLogo.png";
+import { Link, useLocation } from 'react-router-dom'
+import { useTheme } from '../../hooks/useTheme'
+import { useAuth } from '../../hooks/useAuth'
+import Logo from '../../assets/FMLogo.png'
 
 function Header({ onLogout }) {
-  const location = useLocation();
-  const { darkMode, toggleDarkMode } = useTheme();
-
-  // Pegar nome do usuário do localStorage
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const location = useLocation()
+  const { darkMode, toggleDarkMode } = useTheme()
+  const { user } = useAuth()
 
   return (
     <header className="bg-lime-400 dark:bg-gray-900 text-white py-4">
@@ -42,9 +41,9 @@ function Header({ onLogout }) {
             </nav>
 
             {/* Nome do usuário */}
-            {usuario && (
+            {user?.nome && (
               <span className="text-sm text-gray-800 dark:text-gray-300">
-                Olá, {usuario.nome}!
+                Olá, {user.nome}!
               </span>
             )}
 

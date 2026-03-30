@@ -1,127 +1,110 @@
 // src/App.jsx
-import { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import Header from "./components/Header";
-import Modal from "./components/Modal";
-import ConfirmModal from "./components/ConfirmModal";
-import TransactionEditForm from "./components/TransactionEditForm";
-import RotaProtegida from "./components/RotaProtegida";
-import Home from "./pages/Home";
-import Relatorio from "./pages/Relatorio";
-import Login from "./pages/login";
-import Cadastro from "./pages/cadastro";
+import { useState, useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import Header from './components/Header'
+import Modal from './components/Modal'
+import ConfirmModal from './components/ConfirmModal'
+import TransactionEditForm from './components/TransactionEditForm'
+import RotaProtegida from './components/RotaProtegida'
+import Home from './pages/Home'
+import Relatorio from './pages/Relatorio'
+import Login from './pages/login'
+import Cadastro from './pages/cadastro'
 import {
   buscarTransacoes,
   criarTransacao,
   atualizarTransacao,
-  deletarTransacao,
-} from "./services/api";
+  deletarTransacao
+} from './services/api'
+import { useAuth } from './hooks/useAuth'
 
 function App() {
-  const [transacoes, setTransacoes] = useState([]);
-  const [transacaoEditando, setTransacaoEditando] = useState(null);
-  const [transacaoDeletando, setTransacaoDeletando] = useState(null);
-  const [carregando, setCarregando] = useState(false);
+  const [transacoes, setTransacoes] = useState([])
+  const [transacaoEditando, setTransacaoEditando] = useState(null)
+  const [transacaoDeletando, setTransacaoDeletando] = useState(null)
+  const [carregando, setCarregando] = useState(false)
+  const { isAuthenticated, logout } = useAuth()
 
-  // ✅ DEPOIS (atualiza)
-  const [token, setToken] = useState(localStorage.getItem("token"));
-
-  // Buscar transações quando logar
   useEffect(() => {
-    if (token) {
-      carregarTransacoes();
+    if (isAuthenticated) {
+      carregarTransacoes()
+    } else {
+      setTransacoes([])
     }
-  }, [token]);
+  }, [isAuthenticated])
 
   async function carregarTransacoes() {
     try {
-      setCarregando(true);
-      const data = await buscarTransacoes();
-      setTransacoes(data);
+      setCarregando(true)
+      const data = await buscarTransacoes()
+      setTransacoes(data)
     } catch (error) {
-      console.error("Erro ao carregar transações:", error);
+      console.error('Erro ao carregar transações:', error)
+      if (error.status === 401) {
+        logout()
+      }
     } finally {
-      setCarregando(false);
+      setCarregando(false)
     }
   }
 
   async function handleAddTransaction(novaTransacao) {
     try {
-      const transacaoCriada = await criarTransacao(novaTransacao);
-      setTransacoes([transacaoCriada, ...transacoes]);
+      const transacaoCriada = await criarTransacao(novaTransacao)
+      setTransacoes((prev) => [transacaoCriada, ...prev])
     } catch (error) {
-      console.error("Erro ao criar transação:", error);
-      alert("Erro ao criar transação");
+      console.error('Erro ao criar transação:', error)
+      alert(error.message || 'Erro ao criar transação')
     }
   }
 
-  function handleLogin(novoToken, usuario) {
-    localStorage.setItem("token", novoToken);
-    localStorage.setItem("usuario", JSON.stringify(usuario));
-    setToken(novoToken);
-  }
-
   function handleDeleteClick(transacao) {
-    setTransacaoDeletando(transacao);
+    setTransacaoDeletando(transacao)
   }
 
   async function handleConfirmDelete() {
     try {
-      await deletarTransacao(transacaoDeletando._id);
-      setTransacoes(transacoes.filter((t) => t._id !== transacaoDeletando._id));
-      setTransacaoDeletando(null);
+      await deletarTransacao(transacaoDeletando._id)
+      setTransacoes((prev) => prev.filter((t) => t._id !== transacaoDeletando._id))
+      setTransacaoDeletando(null)
     } catch (error) {
-      console.error("Erro ao deletar transação:", error);
-      alert("Erro ao deletar transação");
+      console.error('Erro ao deletar transação:', error)
+      alert(error.message || 'Erro ao deletar transação')
     }
   }
 
   function handleEditTransaction(transacao) {
-    setTransacaoEditando(transacao);
+    setTransacaoEditando(transacao)
   }
 
   async function handleSaveEdit(transacaoAtualizada) {
     try {
-      const atualizada = await atualizarTransacao(
-        transacaoAtualizada._id,
-        transacaoAtualizada,
-      );
-      setTransacoes(
-        transacoes.map((t) => (t._id === atualizada._id ? atualizada : t)),
-      );
-      setTransacaoEditando(null);
+      const atualizada = await atualizarTransacao(transacaoAtualizada._id, transacaoAtualizada)
+      setTransacoes((prev) => prev.map((t) => (t._id === atualizada._id ? atualizada : t)))
+      setTransacaoEditando(null)
     } catch (error) {
-      console.error("Erro ao atualizar transação:", error);
-      alert("Erro ao atualizar transação");
+      console.error('Erro ao atualizar transação:', error)
+      alert(error.message || 'Erro ao atualizar transação')
     }
   }
 
   function handleCloseEditModal() {
-    setTransacaoEditando(null);
+    setTransacaoEditando(null)
   }
 
   function handleCloseDeleteModal() {
-    setTransacaoDeletando(null);
+    setTransacaoDeletando(null)
   }
-
-  // Função de logout
-  function handleLogout() {
-  localStorage.removeItem('token')
-  localStorage.removeItem('usuario')
-  setToken(null)  // ← Isso faz o Header sumir
-}
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
-      {token && <Header onLogout={handleLogout} />}
+      {isAuthenticated && <Header onLogout={logout} />}
 
       <main className="container mx-auto px-4 py-8 max-w-2xl">
         <Routes>
-          {/* Rotas públicas */}
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/registrar" element={<Cadastro onLogin={handleLogin} />}  />
+          <Route path="/login" element={<Login />} />
+          <Route path="/registrar" element={<Cadastro />} />
 
-          {/* Rotas protegidas */}
           <Route
             path="/"
             element={
@@ -165,7 +148,7 @@ function App() {
         mensagem={`Tem certeza que deseja excluir "${transacaoDeletando?.descricao}"? Esta ação não pode ser desfeita.`}
       />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

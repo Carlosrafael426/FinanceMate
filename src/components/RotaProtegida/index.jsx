@@ -1,10 +1,11 @@
 // src/components/RotaProtegida.jsx
 import { Navigate } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
 
 function RotaProtegida({ children }) {
-  const token = localStorage.getItem('token')
+  const { isAuthenticated } = useAuth()
 
-  if (!token) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />
   }
 

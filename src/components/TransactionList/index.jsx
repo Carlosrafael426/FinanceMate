@@ -16,7 +16,7 @@ function TransactionList({ transacoes, onDeleteTransaction, onEditTransaction })
       <ul className="space-y-3">
         {transacoes.map((transacao) => (
           <li
-            key={transacao.id}
+            key={transacao._id}
             className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg border-l-4 gap-2 sm:gap-4 ${
               transacao.tipo === 'receita'
                 ? 'border-green-500 bg-green-50 dark:bg-green-900/30'

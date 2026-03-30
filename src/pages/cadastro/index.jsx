@@ -1,18 +1,17 @@
-// src/pages/Cadastro.jsx
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import Logo from "../../assets/FMLogo.png";
+import { useNavigate, Navigate, Link } from 'react-router-dom'
+import Logo from '../../assets/FMLogo.png'
+import { useAuth } from '../../hooks/useAuth'
+import { register as registerRequest } from '../../services/api'
 
-const API_URL = 'https://financemate-api.onrender.com/api'
-
-function Cadastro({onLogin }) {
+function Cadastro() {
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [confirmarSenha, setConfirmarSenha] = useState('')
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(false)
-  
+  const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -32,24 +31,9 @@ function Cadastro({onLogin }) {
     setCarregando(true)
 
     try {
-      const response = await fetch(`${API_URL}/auth/registrar`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ nome, email, senha })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao criar conta')
-      }
-
-      onLogin(data.token, data.usuario) 
-      
+      const data = await registerRequest(nome, email, senha)
+      login(data)
       navigate('/')
-      
     } catch (error) {
       setErro(error.message)
     } finally {
@@ -57,11 +41,15 @@ function Cadastro({onLogin }) {
     }
   }
 
+  if (isAuthenticated) {
+    return <Navigate to='/' replace />
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4 py-8">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src={Logo} alt="logo" className="h-10 w-120 h-35" />
+          <img src={Logo} alt="logo" className="h-10 w-auto" />
         </div>
 
         {/* Card do formulário */}

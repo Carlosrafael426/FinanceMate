@@ -1,71 +1,94 @@
-// src/services/api.js
-const API_URL = 'https://financemate-api.onrender.com/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
-// Pegar o token do localStorage
 function getToken() {
   return localStorage.getItem('token')
 }
 
+async function request(endpoint, options = {}) {
+  const url = `${API_URL}${endpoint}`
+  const headers = {
+    ...(options.headers || {}),
+    ...(options.body ? { 'Content-Type': 'application/json' } : {})
+  }
+
+  const response = await fetch(url, {
+    method: options.method || 'GET',
+    headers,
+    body: options.body ? JSON.stringify(options.body) : undefined
+  })
+
+  const text = await response.text()
+  let data = null
+
+  if (text) {
+    try {
+      data = JSON.parse(text)
+    } catch {
+      data = text
+    }
+  }
+
+  if (!response.ok) {
+    const message = data?.error || data?.message || response.statusText || 'Erro na requisição'
+    const error = new Error(message)
+    error.status = response.status
+    throw error
+  }
+
+  return data
+}
+
+function authHeaders() {
+  const token = getToken()
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+export async function login(email, senha) {
+  return request('/auth/login', {
+    method: 'POST',
+    body: { email, senha }
+  })
+}
+
+export async function register(nome, email, senha) {
+  return request('/auth/registrar', {
+    method: 'POST',
+    body: { nome, email, senha }
+  })
+}
+
+export async function fetchUsuario() {
+  return request('/auth/usuario', {
+    headers: authHeaders()
+  })
+}
+
 // TRANSAÇÕES
 export async function buscarTransacoes() {
-  const response = await fetch(`${API_URL}/transacoes`, {
-    headers: {
-      'Authorization': `Bearer ${getToken()}`
-    }
+  return request('/transacoes', {
+    headers: authHeaders()
   })
-  
-  if (!response.ok) {
-    throw new Error('Erro ao buscar transações')
-  }
-  
-  return response.json()
 }
 
 export async function criarTransacao(dados) {
-  const response = await fetch(`${API_URL}/transacoes`, {
+  return request('/transacoes', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${getToken()}`
-    },
-    body: JSON.stringify(dados)
+    headers: authHeaders(),
+    body: dados
   })
-  
-  if (!response.ok) {
-    throw new Error('Erro ao criar transação')
-  }
-  
-  return response.json()
 }
 
 export async function atualizarTransacao(id, dados) {
-  const response = await fetch(`${API_URL}/transacoes/${id}`, {
+  return request(`/transacoes/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${getToken()}`
-    },
-    body: JSON.stringify(dados)
+    headers: authHeaders(),
+    body: dados
   })
-  
-  if (!response.ok) {
-    throw new Error('Erro ao atualizar transação')
-  }
-  
-  return response.json()
 }
 
 export async function deletarTransacao(id) {
-  const response = await fetch(`${API_URL}/transacoes/${id}`, {
+  return request(`/transacoes/${id}`, {
     method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${getToken()}`
-    }
+    headers: authHeaders()
   })
-  
-  if (!response.ok) {
-    throw new Error('Erro ao deletar transação')
-  }
-  
-  return response.json()
 }

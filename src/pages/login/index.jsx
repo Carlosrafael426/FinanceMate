@@ -1,16 +1,15 @@
-// src/pages/Login.jsx
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import Logo from "../../assets/FMLogo.png";
+import { useNavigate, Navigate, Link } from 'react-router-dom'
+import Logo from '../../assets/FMLogo.png'
+import { useAuth } from '../../hooks/useAuth'
+import { login as loginRequest } from '../../services/api'
 
-const API_URL = 'https://financemate-api.onrender.com/api'
-
-function Login({onLogin}) {
+function Login() {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(false)
-  
+  const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -19,24 +18,9 @@ function Login({onLogin}) {
     setCarregando(true)
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, senha })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Email ou senha inválidos')
-      }
-
-      onLogin(data.token, data.usuario)
-      
+      const data = await loginRequest(email, senha)
+      login(data)
       navigate('/')
-      
     } catch (error) {
       setErro(error.message)
     } finally {
@@ -44,12 +28,16 @@ function Login({onLogin}) {
     }
   }
 
+  if (isAuthenticated) {
+    return <Navigate to='/' replace />
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
       <div className="w-full max-w-md">
         
         <div className="text-center mb-8 flex flex-col ">
-          <img src={Logo} alt="logo" className="h-10 w-120 h-35" />
+          <img src={Logo} alt="logo" className="h-10 w-auto" />
           <p className="text-gray-600 dark:text-gray-400 mt-2">
             Controle suas finanças de forma simples
           </p>
