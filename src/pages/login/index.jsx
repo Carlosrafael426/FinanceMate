@@ -3,16 +3,12 @@ import { useNavigate, Navigate, Link } from 'react-router-dom'
 import Logo from '../../assets/FMLogo.png'
 import { useAuth } from '../../hooks/useAuth'
 import { login as loginRequest } from '../../services/api'
-import FeedbackModal from '../../components/FeedbackModal'
 
 function Login() {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(false)
-  const [feedbackOpen, setFeedbackOpen] = useState(false)
-  const [feedbackTitle, setFeedbackTitle] = useState('')
-  const [feedbackMessage, setFeedbackMessage] = useState('')
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
@@ -24,9 +20,7 @@ function Login() {
     try {
       const data = await loginRequest(email, senha)
       login(data)
-      setFeedbackTitle('Login realizado com sucesso!')
-      setFeedbackMessage('Você será redirecionado ao painel em instantes.')
-      setFeedbackOpen(true)
+      navigate('/')
     } catch (error) {
       setErro(error.message)
     } finally {
@@ -34,27 +28,23 @@ function Login() {
     }
   }
 
-  function handleCloseFeedback() {
-    setFeedbackOpen(false)
-    navigate('/')
-  }
-
-  if (isAuthenticated && !feedbackOpen) {
+  if (isAuthenticated) {
     return <Navigate to='/' replace />
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-950 text-slate-100 px-4 py-10">
-      <div className="mx-auto w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="mx-auto mb-4 h-16 w-16 rounded-3xl bg-white/10 flex items-center justify-center shadow-inner">
-            <img src={Logo} alt="logo" className="h-12 w-auto" />
-          </div>
-          <h1 className="text-3xl font-semibold text-white mb-2">Entre na sua conta</h1>
-          <p className="text-slate-300">Acesse seu painel e comece a controlar suas finanças.</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
+      <div className="w-full max-w-md">
+        
+        <div className="text-center mb-8 flex flex-col ">
+          <img src={Logo} alt="logo" className="h-12 w-auto" />
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Controle suas finanças de forma simples
+          </p>
         </div>
 
-        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur rounded-3xl shadow-2xl border border-white/10 p-8">
+       
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
           <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
             Entrar na conta
           </h2>
@@ -113,7 +103,7 @@ function Login() {
             </button>
           </form>
           
-          <p className="text-center mt-6 text-slate-500 dark:text-slate-400">
+          <p className="text-center mt-6 text-gray-600 dark:text-gray-400">
             Não tem conta?{' '}
             <Link 
               to="/registrar" 
@@ -124,14 +114,6 @@ function Login() {
           </p>
         </div>
       </div>
-
-      <FeedbackModal
-        isOpen={feedbackOpen}
-        onClose={handleCloseFeedback}
-        title={feedbackTitle}
-        message={feedbackMessage}
-        type="success"
-      />
     </div>
   )
 }
