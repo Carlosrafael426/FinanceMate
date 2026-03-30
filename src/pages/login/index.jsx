@@ -37,7 +37,7 @@ function Login() {
       <div className="w-full max-w-md">
         
         <div className="text-center mb-8 flex flex-col ">
-          <img src={Logo} alt="logo" className="h-12 w-auto" />
+          <img src={Logo} alt="logo" className="h-30 w-auto" />
           <p className="text-gray-600 dark:text-gray-400 mt-2">
             Controle suas finanças de forma simples
           </p>
